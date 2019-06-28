@@ -2,13 +2,13 @@ class Triangle
   attr_accessor :side1, :side2, :side3, :check_arr
 
   def initialize(side1, side2, side3)
-    self.side1 = side1.to_f
-    self.side2 = side2.to_f
-    self.side3 = side3.to_f
+    self.side1 = side1
+    self.side2 = side2
+    self.side3 = side3
     self.check_arr = [self.side1, self.side2, self.side3]
   end
 
-  def not_violate_inequality?
+  def is_triangle?
     # See video here on how to do the checking for triangle inequality https://www.mathwarehouse.com/geometry/triangles/triangle-inequality-theorem-rule-explained.php
     # basically, for the triangle to not violate the triangle inequality rule it has to pass 3 tests:
     # A+B > C ?
@@ -17,12 +17,15 @@ class Triangle
     check1 = self.side1 + self.side2 > self.side3
     check2 = self.side2 + self.side3 > self.side1
     check3 = self.side1 + self.side3 > self.side2 
-    check1 && check2 && check3 ? true : false
+    check1 && check2 && check3
   end
   
   def is_equilateral? 
     #This checks to see if all the array elements are the same by comparing each element to the first element in the array.
-    self.check_arr.all? {|element| element == check_arr[0]}
+    #self.check_arr.all? {|element| element == check_arr[0]}
+    #after doing pair programming with Nick, we found that using the .uniq method is a bit easier to do
+    #if all the sides are the same, then .uniq will always return 1 and give us our answer. Yay. 
+    check_arr.uniq.length == 1
   end
 
   def is_isosceles? 
@@ -36,13 +39,14 @@ class Triangle
   end
 
   def kind
-    my_kind = nil
-    if is_equilateral? && not_violate_inequality?
-      my_kind = :equilateral
-    elsif is_isosceles? && not_violate_inequality?
-      my_kind = :isosceles
-    elsif is_scalene? && not_violate_inequality?
-      my_kind = :scalene
+    if is_triangle?
+      if is_equilateral?
+        :equilateral
+      elsif is_isosceles?
+        :isosceles
+      elsif is_scalene?
+        :scalene
+      end
     else
       raise TriangleError
     end
