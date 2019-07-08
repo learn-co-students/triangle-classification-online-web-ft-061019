@@ -1,3 +1,4 @@
+require 'pry'
 class Triangle
 attr_accessor :length1, :length2, :length3
   def initialize(length1, length2, length3)
@@ -7,31 +8,29 @@ attr_accessor :length1, :length2, :length3
   end
 
   def kind
-    if (length1 <= 0) || (length2 <=0) || (length3 <=0)
-      raise TriangleError
-    end 
+   
+   validate_triangle
     
     if length1 == length2 && length2 == length3 && length1 == length3
       :equilateral
-    elsif length1 != length2 && length2 != length3 && length3 != length1
-      :scalene 
+    elsif length1 == length2 || length2 == length3 || length3 == length1
+      :isosceles 
     else 
-      :isosceles
+      :scalene
     end 
+  
   end
   
-  def triangle 
-    length1.positive? && length2.positive? && length3.positive?
+  def validate_triangle 
+    real_triangle = [(length1 + length2 > length3), (length1 + length3 > length2), (length2 + length3 > length1)]
+    [length1, length2, length3].each { |s| real_triangle << false if s <= 0 }
+    raise TriangleError if real_triangle.include?(false)
+
   end 
-  
-  def triangle2 
-    length1 + length2 > length3 && length1 + length3 > length2 && length2 + length3 > length1
-  end 
+
   class TriangleError < StandardError 
   
   end
 end
-a = Triangle.new(1,1,1)
-a.kind
 
 
